@@ -3,78 +3,64 @@ import { StoreProvider } from './shared/context/StoreContext';
 import { AdminAuthProvider } from './shared/context/AdminAuthContext';
 import { CustomerLayout } from './customer/layouts/CustomerLayout';
 import { AdminLayout } from './admin/layouts/AdminLayout';
-import { ShieldCheck, Store, ExternalLink } from 'lucide-react';
 
 export default function App() {
-  // Check if initial hash or path is admin
+  // Check if current route is admin (via path, hash, or search)
   const [interfaceMode, setInterfaceMode] = useState<'customer' | 'admin'>(() => {
     if (typeof window !== 'undefined') {
       const path = window.location.pathname.toLowerCase();
       const hash = window.location.hash.toLowerCase();
-      if (path.includes('/admin') || hash.includes('admin')) {
+      const search = window.location.search.toLowerCase();
+      if (path.includes('/admin') || hash.includes('admin') || search.includes('admin')) {
         return 'admin';
       }
     }
     return 'customer';
   });
 
-  // Listen to hash changes if user uses browser navigation
+  // Listen to navigation changes (hash or path)
   useEffect(() => {
-    const handleHashChange = () => {
+    const handleNavigationChange = () => {
+      const path = window.location.pathname.toLowerCase();
       const hash = window.location.hash.toLowerCase();
-      if (hash.includes('admin')) {
+      const search = window.location.search.toLowerCase();
+      if (path.includes('/admin') || hash.includes('admin') || search.includes('admin')) {
         setInterfaceMode('admin');
       } else {
         setInterfaceMode('customer');
       }
     };
 
-    window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
-  }, []);
+    window.addEventListener('hashchange', handleNavigationChange);
+    window.addEventListener('popstate', handleNavigationChange);
 
-  const switchMode = (mode: 'customer' | 'admin') => {
-    setInterfaceMode(mode);
-    if (mode === 'admin') {
-      window.location.hash = 'admin';
-    } else {
-      window.location.hash = '';
-    }
-  };
+    // Keyboard shortcut for owner convenience: Ctrl+Shift+A (or Alt+A) to toggle admin URL
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey && e.shiftKey && (e.key === 'A' || e.key === 'a')) || (e.altKey && (e.key === 'A' || e.key === 'a'))) {
+        e.preventDefault();
+        if (window.location.hash.includes('admin')) {
+          window.location.hash = '';
+        } else {
+          window.location.hash = 'admin';
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('hashchange', handleNavigationChange);
+      window.removeEventListener('popstate', handleNavigationChange);
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
 
   return (
     <StoreProvider>
       <AdminAuthProvider>
         <div className="relative min-h-screen">
-          {/* Main Interface Router: Strictly separated Customer vs Admin */}
+          {/* Main Interface Router: Admin is totally separate from Customer Store */}
           {interfaceMode === 'admin' ? <AdminLayout /> : <CustomerLayout />}
-
-          {/* Floating Interface Switcher Pill for reviewer / owner testing */}
-          <div className="fixed bottom-4 right-4 z-50 flex items-center bg-zinc-950/90 text-white rounded-full p-1.5 shadow-2xl border border-zinc-800 backdrop-blur-md text-xs font-semibold select-none">
-            <button
-              onClick={() => switchMode('customer')}
-              className={`px-3 py-1.5 rounded-full flex items-center gap-1.5 transition-all ${
-                interfaceMode === 'customer'
-                  ? 'bg-white text-zinc-950 shadow-xs font-bold'
-                  : 'text-zinc-400 hover:text-white'
-              }`}
-            >
-              <Store className="w-3.5 h-3.5" />
-              <span>Customer Store</span>
-            </button>
-
-            <button
-              onClick={() => switchMode('admin')}
-              className={`px-3 py-1.5 rounded-full flex items-center gap-1.5 transition-all ${
-                interfaceMode === 'admin'
-                  ? 'bg-zinc-800 text-white shadow-xs font-bold ring-1 ring-zinc-700'
-                  : 'text-zinc-400 hover:text-white'
-              }`}
-            >
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-              <span>ARC Admin Panel</span>
-            </button>
-          </div>
         </div>
       </AdminAuthProvider>
     </StoreProvider>

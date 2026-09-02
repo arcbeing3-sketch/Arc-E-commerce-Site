@@ -12,6 +12,7 @@ import {
   LogOut,
   Shield,
   ExternalLink,
+  Store,
 } from 'lucide-react';
 import { useAdminAuth } from '../../shared/context/AdminAuthContext';
 
@@ -105,6 +106,22 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
             </button>
           );
         })}
+      </div>
+
+      {/* Quick Switch to Customer Storefront */}
+      <div className="px-4 pb-2">
+        <button
+          onClick={() => {
+            window.location.hash = '';
+          }}
+          className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-zinc-400 hover:text-white hover:bg-zinc-900 border border-zinc-800/80 transition-all group"
+        >
+          <div className="flex items-center gap-2.5">
+            <Store className="w-4 h-4 text-emerald-400 group-hover:scale-110 transition-transform" />
+            <span>Customer Store</span>
+          </div>
+          <ExternalLink className="w-3.5 h-3.5 text-zinc-500 group-hover:text-zinc-300" />
+        </button>
       </div>
 
       {/* Admin User Footer */}

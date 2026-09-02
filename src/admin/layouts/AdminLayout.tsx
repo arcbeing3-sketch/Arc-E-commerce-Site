@@ -20,14 +20,15 @@ import { subscribeToAllOrders, updateOrderStatus } from '../../services/firebase
 import { subscribeToAllCustomers } from '../../services/firebase/customers';
 import { getStoreSettings } from '../../services/firebase/settings';
 import { useStore } from '../../shared/context/StoreContext';
+import { INITIAL_PRODUCTS, INITIAL_CATEGORIES } from '../../services/firebase/seed';
 
 export const AdminLayout: React.FC = () => {
   const { isAdmin, loading: authLoading } = useAdminAuth();
   const { showToast } = useStore();
 
   const [activeTab, setActiveTab] = useState<string>('dashboard');
-  const [products, setProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS);
+  const [categories, setCategories] = useState<Category[]>(INITIAL_CATEGORIES);
   const [orders, setOrders] = useState<Order[]>([]);
   const [customers, setCustomers] = useState<UserProfile[]>([]);
   const [settings, setSettings] = useState<StoreSettings>({
@@ -45,8 +46,25 @@ export const AdminLayout: React.FC = () => {
   useEffect(() => {
     if (!isAdmin) return;
 
-    const unsubProd = subscribeToAllProducts((prods) => setProducts(prods));
-    const unsubCat = subscribeToCategories((cats) => setCategories(cats));
+    const unsubProd = subscribeToAllProducts((prods) => {
+      const firestoreIds = new Set(prods.map((p) => p.id));
+      const merged = [...prods];
+      for (const initProd of INITIAL_PRODUCTS) {
+        if (!firestoreIds.has(initProd.id)) {
+          merged.push(initProd);
+        }
+      }
+      setProducts(merged);
+    });
+
+    const unsubCat = subscribeToCategories((cats) => {
+      if (cats.length > 0) {
+        setCategories(cats);
+      } else {
+        setCategories(INITIAL_CATEGORIES);
+      }
+    });
+
     const unsubOrd = subscribeToAllOrders((ords) => setOrders(ords));
     const unsubCust = subscribeToAllCustomers((custs) => setCustomers(custs));
 

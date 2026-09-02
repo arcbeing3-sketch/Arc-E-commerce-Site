@@ -46,15 +46,68 @@ export function subscribeToProducts(
   onlyPublished: boolean = false
 ) {
   const colRef = collection(db, PRODUCTS_COLLECTION);
-  const q = onlyPublished
-    ? query(colRef, where('status', '==', 'published'))
-    : query(colRef, orderBy('createdAt', 'desc'));
 
   return onSnapshot(
-    q,
+    colRef,
     (snapshot) => {
-      const products = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Product));
-      onUpdate(products);
+      const products: Product[] = snapshot.docs.map((docSnap) => {
+        const data = docSnap.data() as any;
+        const stock = typeof data.stock === 'number' ? data.stock : (Number(data.stock) || 0);
+        const price = typeof data.price === 'number' ? data.price : (Number(data.price) || 0);
+        const status = data.status || 'published';
+        const stockStatus =
+          data.stockStatus ||
+          (stock <= 0 ? 'out_of_stock' : stock <= 5 ? 'low_stock' : 'in_stock');
+        const fallbackImg =
+          data.imageUrl ||
+          data.image ||
+          'https://images.unsplash.com/photo-1550009158-9ebf69173e03?auto=format&fit=crop&q=80&w=800';
+
+        const product: Product = {
+          id: docSnap.id,
+          name: data.name || data.title || 'ARC Hardware Item',
+          sku: data.sku || `ARC-${docSnap.id.substring(0, 6).toUpperCase()}`,
+          brand: data.brand || 'ARC',
+          category: data.category || 'Hardware',
+          description: data.description || '',
+          price,
+          originalPrice: data.originalPrice ? Number(data.originalPrice) : undefined,
+          discount: data.discount ? Number(data.discount) : undefined,
+          stock,
+          stockStatus,
+          imageUrl: fallbackImg,
+          galleryImages:
+            Array.isArray(data.galleryImages) && data.galleryImages.length > 0
+              ? data.galleryImages
+              : [fallbackImg],
+          specifications: data.specifications || {},
+          tags: Array.isArray(data.tags) ? data.tags : [],
+          featured: Boolean(data.featured),
+          status,
+          rating: typeof data.rating === 'number' ? data.rating : 5.0,
+          reviewCount: typeof data.reviewCount === 'number' ? data.reviewCount : 0,
+          createdAt: data.createdAt || new Date().toISOString(),
+          updatedAt: data.updatedAt || new Date().toISOString(),
+        };
+        return product;
+      });
+
+      // Sort newest first
+      products.sort((a, b) => {
+        const timeA = new Date(a.createdAt).getTime() || 0;
+        const timeB = new Date(b.createdAt).getTime() || 0;
+        return timeB - timeA;
+      });
+
+      if (onlyPublished) {
+        // Show anything that is explicitly published or has default active status (not draft or archived)
+        const publishedProducts = products.filter(
+          (p) => p.status !== 'draft' && p.status !== 'archived'
+        );
+        onUpdate(publishedProducts);
+      } else {
+        onUpdate(products);
+      }
     },
     (err) => {
       console.error('Error in subscribeToProducts:', err);

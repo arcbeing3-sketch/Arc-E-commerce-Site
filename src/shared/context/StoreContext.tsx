@@ -120,17 +120,42 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       // Subscribe to published products for customer store
       unsubProducts = subscribeToProducts(
         (allProds) => {
-          // Customers only see published products
-          const published = allProds.filter((p) => p.status === 'published');
-          if (published.length > 0) {
-            setProducts(published);
+          // Merge live Firestore products with any items in INITIAL_PRODUCTS that aren't yet in Firestore
+          const firestoreIds = new Set(allProds.map((p) => p.id));
+          const mergedProducts = [...allProds];
+          for (const initProd of INITIAL_PRODUCTS) {
+            if (!firestoreIds.has(initProd.id)) {
+              mergedProducts.push(initProd);
+            }
           }
+
+          setProducts(mergedProducts);
           setIsLoadingProducts(false);
+
+          // Dynamically detect any new categories from newly added products
+          setCategories((prevCats) => {
+            const existingNames = new Set(prevCats.map((c) => c.name.toLowerCase()));
+            const newCats: Category[] = [];
+            for (const p of mergedProducts) {
+              if (p.category && !existingNames.has(p.category.toLowerCase())) {
+                existingNames.add(p.category.toLowerCase());
+                newCats.push({
+                  id: `cat-${p.category.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
+                  name: p.category,
+                  slug: p.category.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+                  description: `${p.category} hardware products.`,
+                  imageUrl: p.imageUrl,
+                  productCount: 1,
+                });
+              }
+            }
+            return newCats.length > 0 ? [...prevCats, ...newCats] : prevCats;
+          });
 
           // Realtime inventory synchronization: Update cart items if stock changed
           setCart((prevCart) => {
             return prevCart.map((item) => {
-              const liveProd = allProds.find((p) => p.id === item.product.id);
+              const liveProd = mergedProducts.find((p) => p.id === item.product.id);
               if (liveProd) {
                 // If product is archived or unpublished, or stock is 0
                 const availableStock = liveProd.status === 'published' ? liveProd.stock : 0;
