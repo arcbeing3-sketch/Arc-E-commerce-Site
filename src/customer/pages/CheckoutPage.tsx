@@ -4,6 +4,8 @@ import { createOrder } from '../../services/firebase/orders';
 import { formatCurrency } from '../../shared/utils/formatters';
 import { PaymentMethod, Order } from '../../shared/types';
 import confetti from 'canvas-confetti';
+import { PAKISTAN_CITIES, CITY_COORDINATES } from '../../shared/pakistanCities';
+import { GoogleMapView } from '../components/GoogleMapView';
 import {
   ShieldCheck,
   Truck,
@@ -35,10 +37,25 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
   const [email, setEmail] = useState(customerUser?.email || '');
   const [street, setStreet] = useState('');
   const [city, setCity] = useState('Lahore');
+  const [cityFilter, setCityFilter] = useState('');
   const [province, setProvince] = useState('Punjab');
   const [postalCode, setPostalCode] = useState('');
   const [notes, setNotes] = useState('');
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('cod');
+
+  const filteredCities = cityFilter.trim()
+    ? PAKISTAN_CITIES.filter((c) =>
+        c.toLowerCase().includes(cityFilter.trim().toLowerCase())
+      )
+    : PAKISTAN_CITIES;
+
+  const handleCityChange = (newCity: string) => {
+    setCity(newCity);
+    const known = CITY_COORDINATES[newCity];
+    if (known?.province) {
+      setProvince(known.province);
+    }
+  };
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [completedOrder, setCompletedOrder] = useState<Order | null>(null);
@@ -170,6 +187,15 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
             </div>
           </div>
 
+          <div className="max-w-lg mx-auto mb-6 text-left">
+            <GoogleMapView
+              city={completedOrder.shippingAddress.city}
+              street={completedOrder.shippingAddress.street}
+              province={completedOrder.shippingAddress.province}
+              interactive={false}
+            />
+          </div>
+
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4">
             <button
               onClick={onNavigateToOrders}
@@ -290,14 +316,54 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                 <label className="block text-xs font-semibold text-zinc-700 mb-1">
                   City <span className="text-rose-500">*</span>
                 </label>
-                <input
-                  type="text"
-                  required
-                  value={city}
-                  onChange={(e) => setCity(e.target.value)}
-                  placeholder="e.g. Lahore"
-                  className="w-full px-3.5 py-2.5 text-xs border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:outline-none"
-                />
+                <div className="space-y-1.5">
+                  <select
+                    required
+                    value={city}
+                    onChange={(e) => handleCityChange(e.target.value)}
+                    className="w-full px-3.5 py-2.5 text-xs border border-zinc-300 rounded-none focus:ring-1 focus:ring-zinc-900 focus:outline-none bg-white font-normal text-zinc-900 shadow-2xs"
+                  >
+                    {PAKISTAN_CITIES.map((cityName) => (
+                      <option key={cityName} value={cityName}>
+                        {cityName}
+                      </option>
+                    ))}
+                  </select>
+
+                  {/* Quick search input to filter the 379 cities */}
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={cityFilter}
+                      onChange={(e) => setCityFilter(e.target.value)}
+                      placeholder="Type to filter 370+ cities..."
+                      className="w-full px-2.5 py-1.5 text-[11px] border border-zinc-200 rounded-none focus:ring-1 focus:ring-zinc-900 focus:outline-none bg-zinc-50 placeholder:text-zinc-400 font-light"
+                    />
+                    {cityFilter.trim() && (
+                      <div className="absolute top-full left-0 right-0 z-30 max-h-48 overflow-y-auto bg-white border border-zinc-200 shadow-lg text-xs mt-0.5">
+                        {filteredCities.length === 0 ? (
+                          <div className="p-2 text-[11px] text-zinc-400 text-center">No city match found</div>
+                        ) : (
+                          filteredCities.slice(0, 15).map((cityName) => (
+                            <button
+                              type="button"
+                              key={cityName}
+                              onClick={() => {
+                                handleCityChange(cityName);
+                                setCityFilter('');
+                              }}
+                              className={`w-full text-left px-3 py-1.5 hover:bg-zinc-100 text-[11px] block transition-colors ${
+                                city === cityName ? 'bg-zinc-100 font-semibold text-zinc-900' : 'text-zinc-700'
+                              }`}
+                            >
+                              {cityName}
+                            </button>
+                          ))
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
 
               <div>
@@ -307,7 +373,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                 <select
                   value={province}
                   onChange={(e) => setProvince(e.target.value)}
-                  className="w-full px-3.5 py-2.5 text-xs border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:outline-none bg-white"
+                  className="w-full px-3.5 py-2.5 text-xs border border-zinc-300 rounded-none focus:ring-1 focus:ring-zinc-900 focus:outline-none bg-white font-normal text-zinc-900 shadow-2xs"
                 >
                   <option value="Punjab">Punjab</option>
                   <option value="Sindh">Sindh</option>
@@ -328,9 +394,25 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                   value={postalCode}
                   onChange={(e) => setPostalCode(e.target.value)}
                   placeholder="e.g. 54000"
-                  className="w-full px-3.5 py-2.5 text-xs border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:outline-none"
+                  className="w-full px-3.5 py-2.5 text-xs border border-zinc-300 rounded-none focus:ring-1 focus:ring-zinc-900 focus:outline-none font-light"
                 />
               </div>
+            </div>
+
+            {/* Google Map View */}
+            <div className="pt-2">
+              <label className="block text-xs font-semibold text-zinc-700 mb-1.5 flex items-center justify-between">
+                <span>Google Map View &bull; Delivery Location Pinpoint</span>
+                <span className="text-[11px] font-light text-zinc-500">
+                  {city ? `${city}, Pakistan` : 'Pakistan'}
+                </span>
+              </label>
+              <GoogleMapView
+                city={city}
+                street={street}
+                province={province}
+                interactive={true}
+              />
             </div>
 
             <div>
@@ -451,7 +533,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
 
         {/* Right: Sticky Order Summary & Submit Button */}
         <div className="lg:col-span-5 space-y-6">
-          <div className="bg-zinc-50 p-6 sm:p-8 rounded-3xl border border-zinc-200/80 shadow-2xs space-y-6 sticky top-24">
+          <div className="bg-zinc-50 p-6 sm:p-8 rounded-none border border-zinc-200 shadow-2xs space-y-6 sticky top-24">
             <h3 className="text-base font-bold text-zinc-900 border-b border-zinc-200 pb-3">
               Order Review ({cart.length} unique items)
             </h3>
@@ -463,13 +545,13 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                   <img
                     src={item.product.imageUrl}
                     alt={item.product.name}
-                    className="w-12 h-12 rounded-lg object-cover bg-zinc-100 shrink-0"
+                    className="w-12 h-12 rounded-none object-cover bg-zinc-100 shrink-0 border border-zinc-200"
                   />
                   <div className="flex-1 min-w-0">
                     <h4 className="font-semibold text-zinc-900 truncate">{item.product.name}</h4>
                     <span className="text-zinc-400">Qty: {item.quantity}</span>
                   </div>
-                  <span className="font-bold text-zinc-900">
+                  <span className="font-medium text-zinc-900">
                     {formatCurrency(item.product.price * item.quantity)}
                   </span>
                 </div>
@@ -480,15 +562,15 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
             <div className="space-y-2.5 pt-4 border-t border-zinc-200 text-xs">
               <div className="flex justify-between text-zinc-600">
                 <span>Subtotal</span>
-                <span className="font-bold text-zinc-900">{formatCurrency(cartSubtotal)}</span>
+                <span className="font-medium text-zinc-900">{formatCurrency(cartSubtotal)}</span>
               </div>
               <div className="flex justify-between text-zinc-600">
                 <span>Shipping Delivery</span>
-                <span className="font-bold text-zinc-900">
+                <span className="font-medium text-zinc-900">
                   {isFreeShipping ? 'FREE' : formatCurrency(shippingFee)}
                 </span>
               </div>
-              <div className="flex justify-between text-base font-extrabold text-zinc-900 pt-3 border-t border-zinc-200">
+              <div className="flex justify-between text-base font-semibold text-zinc-900 pt-3 border-t border-zinc-200">
                 <span>Total Amount Due</span>
                 <span>{formatCurrency(grandTotal)}</span>
               </div>
@@ -497,7 +579,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full py-4 px-4 bg-zinc-900 hover:bg-black text-white text-xs font-bold uppercase tracking-wider rounded-xl transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 disabled:opacity-50"
+              className="w-full py-4 px-4 bg-zinc-900 hover:bg-black text-white text-xs font-medium uppercase tracking-wider rounded-none transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 disabled:opacity-50"
             >
               <span>{isSubmitting ? 'Placing Order...' : `Confirm Order (${formatCurrency(grandTotal)})`}</span>
               <ArrowRight className="w-4 h-4" />

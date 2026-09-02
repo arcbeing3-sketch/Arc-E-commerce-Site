@@ -52,7 +52,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
             <div className="p-5 border-b border-zinc-100 flex items-center justify-between bg-zinc-50/50">
               <div className="flex items-center gap-2">
                 <ShoppingBag className="w-5 h-5 text-zinc-900" />
-                <h2 className="text-base font-bold text-zinc-900">Your ARC Bag ({cartCount})</h2>
+                <h2 className="text-base font-semibold text-zinc-900">Your ARC Bag ({cartCount})</h2>
               </div>
               <button
                 onClick={onClose}
@@ -109,18 +109,18 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                       key={item.product.id}
                       className="flex gap-4 p-3 rounded-xl border border-zinc-100 hover:border-zinc-200 bg-white transition-colors"
                     >
-                      {/* Product Thumbnail */}
+                      {/* Product Thumbnail (Sharp Corners) */}
                       <div
                         onClick={() => {
                           onClose();
                           onNavigateToProduct(item.product.id);
                         }}
-                        className="w-20 h-20 rounded-lg bg-zinc-100 overflow-hidden shrink-0 cursor-pointer"
+                        className="w-20 h-20 rounded-none bg-zinc-100 overflow-hidden shrink-0 cursor-pointer border border-zinc-200"
                       >
                         <img
                           src={item.product.imageUrl}
                           alt={item.product.name}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-cover rounded-none"
                         />
                       </div>
 
@@ -156,7 +156,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                           </span>
 
                           {/* Quantity Stepper */}
-                          <div className="flex items-center border border-zinc-200 rounded-lg bg-zinc-50 overflow-hidden">
+                          <div className="flex items-center border border-zinc-200 rounded-none bg-zinc-50 overflow-hidden">
                             <button
                               onClick={() => updateCartQuantity(item.product.id, item.quantity - 1)}
                               className="p-1 px-1.5 hover:bg-zinc-200 text-zinc-600 transition-colors"
@@ -197,7 +197,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                       {isFreeShipping ? 'FREE' : formatCurrency(settings.defaultShippingFee || 450)}
                     </span>
                   </div>
-                  <div className="flex justify-between text-sm font-bold text-zinc-900 pt-2 border-t border-zinc-200">
+                  <div className="flex justify-between text-sm font-semibold text-zinc-900 pt-2 border-t border-zinc-200">
                     <span>Estimated Total</span>
                     <span>
                       {formatCurrency(
@@ -213,7 +213,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                       onClose();
                       onNavigateToCheckout();
                     }}
-                    className="w-full py-3 px-4 bg-zinc-900 hover:bg-black text-white text-xs font-bold uppercase tracking-wider rounded-xl transition-all shadow-md flex items-center justify-center gap-2"
+                    className="w-full py-3.5 px-4 bg-zinc-900 hover:bg-black text-white text-xs font-medium uppercase tracking-wider rounded-none transition-all shadow-md flex items-center justify-center gap-2"
                   >
                     <span>Checkout ({formatCurrency(cartSubtotal)})</span>
                     <ArrowRight className="w-4 h-4" />

@@ -5,7 +5,8 @@ import { subscribeToCustomerOrders } from '../../services/firebase/orders';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../services/firebase/config';
 import { formatCurrency, formatDate, getOrderStatusBadge } from '../../shared/utils/formatters';
-import { Package, Search, Clock, CheckCircle2, Truck, AlertCircle, ArrowRight } from 'lucide-react';
+import { Package, Search, Clock, CheckCircle2, Truck, AlertCircle, ArrowRight, MapPin } from 'lucide-react';
+import { GoogleMapView } from '../components/GoogleMapView';
 
 interface OrdersPageProps {
   onNavigateToCatalog: () => void;
@@ -19,6 +20,7 @@ export const OrdersPage: React.FC<OrdersPageProps> = ({ onNavigateToCatalog, onO
   const [searchOrderId, setSearchOrderId] = useState('');
   const [searchedOrder, setSearchedOrder] = useState<Order | null>(null);
   const [searchLoading, setSearchLoading] = useState(false);
+  const [expandedMapOrderId, setExpandedMapOrderId] = useState<string | null>(null);
 
   useEffect(() => {
     if (customerUser?.uid) {
@@ -67,8 +69,8 @@ export const OrdersPage: React.FC<OrdersPageProps> = ({ onNavigateToCatalog, onO
       {/* Header */}
       <div className="border-b border-zinc-200 pb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <span className="text-xs font-bold tracking-widest uppercase text-zinc-400">ARC Customer Portal</span>
-          <h1 className="text-3xl font-extrabold text-zinc-900 mt-1">Order Tracking & History</h1>
+          <span className="text-xs font-medium tracking-widest uppercase text-zinc-400">ARC Customer Portal</span>
+          <h1 className="text-3xl font-semibold text-zinc-900 mt-1">Order Tracking & History</h1>
         </div>
 
         {/* Quick Order Lookup by ID */}
@@ -78,12 +80,12 @@ export const OrdersPage: React.FC<OrdersPageProps> = ({ onNavigateToCatalog, onO
             value={searchOrderId}
             onChange={(e) => setSearchOrderId(e.target.value)}
             placeholder="Enter Order ID (e.g. ARC-12345)"
-            className="px-3.5 py-2 text-xs border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:outline-none w-56 bg-white"
+            className="px-3.5 py-2 text-xs border border-zinc-300 rounded-none focus:ring-1 focus:ring-zinc-900 focus:outline-none w-56 bg-white"
           />
           <button
             type="submit"
             disabled={searchLoading}
-            className="px-4 py-2 bg-zinc-900 hover:bg-black text-white text-xs font-bold rounded-xl transition-all shadow disabled:opacity-50"
+            className="px-4 py-2 bg-zinc-900 hover:bg-black text-white text-xs font-medium rounded-none transition-all shadow disabled:opacity-50"
           >
             {searchLoading ? 'Looking...' : 'Track'}
           </button>
@@ -92,7 +94,7 @@ export const OrdersPage: React.FC<OrdersPageProps> = ({ onNavigateToCatalog, onO
 
       {/* Searched Order Card Result */}
       {searchedOrder && (
-        <div className="p-6 bg-zinc-900 text-white rounded-3xl space-y-4 shadow-xl border border-zinc-800">
+        <div className="p-6 bg-zinc-900 text-white rounded-none space-y-4 shadow-xl border border-zinc-800">
           <div className="flex flex-wrap items-center justify-between gap-2 border-b border-zinc-800 pb-4">
             <div>
               <span className="text-[11px] uppercase tracking-widest text-emerald-400 font-bold">
@@ -115,7 +117,7 @@ export const OrdersPage: React.FC<OrdersPageProps> = ({ onNavigateToCatalog, onO
                 return (
                   <div key={step} className="space-y-1.5">
                     <div
-                      className={`h-2 rounded-full transition-all ${
+                      className={`h-2 rounded-none transition-all ${
                         isPassed ? 'bg-emerald-400' : 'bg-zinc-800'
                       } ${isCurrent ? 'ring-2 ring-white' : ''}`}
                     />
@@ -142,6 +144,16 @@ export const OrdersPage: React.FC<OrdersPageProps> = ({ onNavigateToCatalog, onO
                 {searchedOrder.paymentMethod} &bull; {formatCurrency(searchedOrder.total)}
               </p>
             </div>
+          </div>
+
+          {/* Google Map Delivery View for searched order */}
+          <div className="pt-2">
+            <GoogleMapView
+              city={searchedOrder.shippingAddress.city}
+              street={searchedOrder.shippingAddress.street}
+              province={searchedOrder.shippingAddress.province}
+              interactive={false}
+            />
           </div>
         </div>
       )}
@@ -177,12 +189,12 @@ export const OrdersPage: React.FC<OrdersPageProps> = ({ onNavigateToCatalog, onO
               return (
                 <div
                   key={order.id}
-                  className="bg-white border border-zinc-200 rounded-3xl p-6 shadow-2xs space-y-5"
+                  className="bg-white border border-zinc-200 rounded-none p-6 shadow-2xs space-y-5"
                 >
                   {/* Order Top Bar */}
                   <div className="flex flex-wrap items-center justify-between gap-4 border-b border-zinc-100 pb-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-zinc-100 flex items-center justify-center text-zinc-900 font-mono font-bold text-xs">
+                      <div className="w-10 h-10 rounded-none bg-zinc-100 flex items-center justify-center text-zinc-900 font-mono font-bold text-xs border border-zinc-200">
                         ARC
                       </div>
                       <div>
@@ -192,7 +204,7 @@ export const OrdersPage: React.FC<OrdersPageProps> = ({ onNavigateToCatalog, onO
                     </div>
 
                     <div className="flex items-center gap-3">
-                      <span className={`text-xs font-semibold px-3 py-1 rounded-full border ${badge.bg} ${badge.text} ${badge.border}`}>
+                      <span className={`text-xs font-semibold px-3 py-1 rounded-none border ${badge.bg} ${badge.text} ${badge.border}`}>
                         {badge.label}
                       </span>
                       <span className="text-sm font-extrabold text-zinc-900">
@@ -204,11 +216,11 @@ export const OrdersPage: React.FC<OrdersPageProps> = ({ onNavigateToCatalog, onO
                   {/* Items List */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {order.items.map((item, idx) => (
-                      <div key={idx} className="flex items-center gap-3 p-3 rounded-2xl bg-zinc-50 border border-zinc-100">
+                      <div key={idx} className="flex items-center gap-3 p-3 rounded-none bg-zinc-50 border border-zinc-200">
                         <img
                           src={item.imageUrl}
                           alt={item.name}
-                          className="w-12 h-12 rounded-xl object-cover bg-zinc-200 shrink-0"
+                          className="w-12 h-12 rounded-none object-cover bg-zinc-200 shrink-0 border border-zinc-200"
                         />
                         <div className="min-w-0 flex-1 text-xs">
                           <h4 className="font-semibold text-zinc-900 truncate">{item.name}</h4>
@@ -235,6 +247,38 @@ export const OrdersPage: React.FC<OrdersPageProps> = ({ onNavigateToCatalog, onO
                           ({formatDate(order.statusHistory[order.statusHistory.length - 1].timestamp)})
                         </span>
                       </div>
+                    </div>
+                  )}
+
+                  {/* Delivery Address & Google Map Trigger */}
+                  <div className="pt-3 border-t border-zinc-100 flex flex-wrap items-center justify-between gap-2 text-xs">
+                    <div className="text-zinc-600">
+                      <span className="font-semibold text-zinc-800">Delivery To: </span>
+                      <span>
+                        {order.shippingAddress.street}, {order.shippingAddress.city}
+                      </span>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setExpandedMapOrderId(expandedMapOrderId === order.id ? null : order.id)
+                      }
+                      className="inline-flex items-center gap-1 text-[11px] text-zinc-700 hover:text-zinc-950 font-medium px-2 py-1 bg-zinc-100 hover:bg-zinc-200 transition-colors"
+                    >
+                      <MapPin className="w-3 h-3 text-zinc-500" />
+                      <span>{expandedMapOrderId === order.id ? 'Hide Map' : 'View on Google Maps'}</span>
+                    </button>
+                  </div>
+
+                  {expandedMapOrderId === order.id && (
+                    <div className="pt-2">
+                      <GoogleMapView
+                        city={order.shippingAddress.city}
+                        street={order.shippingAddress.street}
+                        province={order.shippingAddress.province}
+                        interactive={false}
+                      />
                     </div>
                   )}
                 </div>

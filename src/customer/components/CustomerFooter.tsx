@@ -17,7 +17,7 @@ export const CustomerFooter: React.FC<CustomerFooterProps> = ({ onNavigate }) =>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             <div className="flex items-start gap-4">
-              <div className="p-2.5 rounded-xl bg-zinc-800 text-white shrink-0">
+              <div className="p-2.5 rounded-none bg-zinc-800 text-white shrink-0">
                 <Truck className="w-5 h-5 text-emerald-400" />
               </div>
               <div>
@@ -29,7 +29,7 @@ export const CustomerFooter: React.FC<CustomerFooterProps> = ({ onNavigate }) =>
             </div>
 
             <div className="flex items-start gap-4">
-              <div className="p-2.5 rounded-xl bg-zinc-800 text-white shrink-0">
+              <div className="p-2.5 rounded-none bg-zinc-800 text-white shrink-0">
                 <ShieldCheck className="w-5 h-5 text-amber-400" />
               </div>
               <div>
@@ -41,7 +41,7 @@ export const CustomerFooter: React.FC<CustomerFooterProps> = ({ onNavigate }) =>
             </div>
 
             <div className="flex items-start gap-4">
-              <div className="p-2.5 rounded-xl bg-zinc-800 text-white shrink-0">
+              <div className="p-2.5 rounded-none bg-zinc-800 text-white shrink-0">
                 <RotateCcw className="w-5 h-5 text-sky-400" />
               </div>
               <div>
@@ -53,7 +53,7 @@ export const CustomerFooter: React.FC<CustomerFooterProps> = ({ onNavigate }) =>
             </div>
 
             <div className="flex items-start gap-4">
-              <div className="p-2.5 rounded-xl bg-zinc-800 text-white shrink-0">
+              <div className="p-2.5 rounded-none bg-zinc-800 text-white shrink-0">
                 <Headphones className="w-5 h-5 text-purple-400" />
               </div>
               <div>
@@ -73,12 +73,12 @@ export const CustomerFooter: React.FC<CustomerFooterProps> = ({ onNavigate }) =>
           {/* Brand Info */}
           <div className="md:col-span-2 space-y-4">
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 bg-white text-zinc-950 rounded-lg flex items-center justify-center font-black text-sm">
+              <div className="w-7 h-7 bg-white text-zinc-950 rounded-none flex items-center justify-center font-semibold text-sm">
                 A
               </div>
-              <span className="text-lg font-black tracking-widest text-white">ARC</span>
+              <span className="text-lg font-semibold tracking-widest text-white">ARC</span>
             </div>
-            <p className="text-zinc-400 text-xs leading-relaxed max-w-sm">
+            <p className="text-zinc-400 text-xs leading-relaxed max-w-sm font-light">
               ARC is a single-vendor hardware engineering brand. We design, craft, and distribute ultra-minimalist acoustics, mechanical keyboards, and workspace objects directly to enthusiasts.
             </p>
             <div className="pt-2 text-zinc-500 text-[11px] space-y-1">
@@ -90,7 +90,7 @@ export const CustomerFooter: React.FC<CustomerFooterProps> = ({ onNavigate }) =>
 
           {/* Catalog Categories */}
           <div>
-            <h4 className="text-white text-xs font-bold uppercase tracking-wider mb-4">Hardware Series</h4>
+            <h4 className="text-white text-xs font-medium uppercase tracking-wider mb-4">Hardware Series</h4>
             <ul className="space-y-2.5">
               <li>
                 <button

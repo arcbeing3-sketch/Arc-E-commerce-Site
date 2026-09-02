@@ -69,20 +69,20 @@ export const ProductListingPage: React.FC<ProductListingPageProps> = ({
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       {/* Page Header */}
       <div className="border-b border-zinc-200 pb-6">
-        <span className="text-xs font-bold tracking-widest uppercase text-zinc-400">ARC Hardware Studio</span>
-        <h1 className="text-3xl font-extrabold text-zinc-900 mt-1">Hardware Catalog</h1>
-        <p className="text-sm text-zinc-500 mt-1">
+        <span className="text-xs font-medium tracking-widest uppercase text-zinc-400">ARC Hardware Studio</span>
+        <h1 className="text-3xl font-semibold text-zinc-900 mt-1">Hardware Catalog</h1>
+        <p className="text-sm text-zinc-500 mt-1 font-light">
           Showing {filteredProducts.length} precision equipment units crafted directly by ARC.
         </p>
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="flex flex-col lg:flex-row gap-4 justify-between items-stretch lg:items-center bg-zinc-50 p-4 rounded-2xl border border-zinc-200/80">
+      <div className="flex flex-col lg:flex-row gap-4 justify-between items-stretch lg:items-center bg-zinc-50 p-4 rounded-none border border-zinc-200">
         {/* Category Pills */}
         <div className="flex items-center gap-2 overflow-x-auto pb-2 lg:pb-0 scrollbar-none">
           <button
             onClick={() => setSelectedCategory('All')}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
+            className={`px-3.5 py-1.5 rounded-none text-xs font-medium whitespace-nowrap transition-all ${
               selectedCategory === 'All'
                 ? 'bg-zinc-900 text-white shadow-xs'
                 : 'bg-white text-zinc-600 hover:bg-zinc-200/70 border border-zinc-200'
@@ -97,7 +97,7 @@ export const ProductListingPage: React.FC<ProductListingPageProps> = ({
               <button
                 key={cat.id}
                 onClick={() => setSelectedCategory(cat.name)}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
+                className={`px-3.5 py-1.5 rounded-none text-xs font-medium whitespace-nowrap transition-all ${
                   selectedCategory === cat.name
                     ? 'bg-zinc-900 text-white shadow-xs'
                     : 'bg-white text-zinc-600 hover:bg-zinc-200/70 border border-zinc-200'
@@ -119,7 +119,7 @@ export const ProductListingPage: React.FC<ProductListingPageProps> = ({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search gear..."
-              className="w-full pl-9 pr-8 py-2 text-xs bg-white border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:outline-none"
+              className="w-full pl-9 pr-8 py-2 text-xs bg-white border border-zinc-300 rounded-none focus:border-zinc-900 focus:outline-none"
             />
             {searchQuery && (
               <button
@@ -132,12 +132,12 @@ export const ProductListingPage: React.FC<ProductListingPageProps> = ({
           </div>
 
           {/* In-Stock Toggle */}
-          <label className="flex items-center gap-2 cursor-pointer bg-white px-3 py-2 border border-zinc-200 rounded-xl text-xs font-medium text-zinc-700 select-none hover:bg-zinc-50">
+          <label className="flex items-center gap-2 cursor-pointer bg-white px-3 py-2 border border-zinc-200 rounded-none text-xs font-medium text-zinc-700 select-none hover:bg-zinc-50">
             <input
               type="checkbox"
               checked={inStockOnly}
               onChange={(e) => setInStockOnly(e.target.checked)}
-              className="rounded text-zinc-900 focus:ring-zinc-900"
+              className="rounded-none text-zinc-900 focus:ring-zinc-900"
             />
             <span>In Stock Only</span>
           </label>
@@ -147,7 +147,7 @@ export const ProductListingPage: React.FC<ProductListingPageProps> = ({
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as any)}
-              className="text-xs font-semibold text-zinc-700 bg-white border border-zinc-200 rounded-xl px-3 py-2 appearance-none pr-8 cursor-pointer focus:outline-none focus:ring-2 focus:ring-zinc-900"
+              className="text-xs font-semibold text-zinc-700 bg-white border border-zinc-200 rounded-none px-3 py-2 appearance-none pr-8 cursor-pointer focus:outline-none focus:border-zinc-900"
             >
               <option value="featured">Sort: Featured</option>
               <option value="price-asc">Price: Low to High</option>

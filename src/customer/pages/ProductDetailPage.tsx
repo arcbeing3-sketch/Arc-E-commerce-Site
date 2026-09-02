@@ -123,39 +123,39 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
         {/* Left: Media Gallery */}
         <div className="lg:col-span-7 space-y-4">
-          {/* Main Large Image */}
-          <div className="relative aspect-square w-full rounded-3xl bg-zinc-100 overflow-hidden border border-zinc-200/80 shadow-xs">
+          {/* Main Large Image (Sharp Corners) */}
+          <div className="relative aspect-square w-full rounded-none bg-zinc-100 overflow-hidden border border-zinc-200 shadow-xs">
             <img
               src={selectedImage || product.imageUrl}
               alt={product.name}
-              className="w-full h-full object-cover object-center"
+              className="w-full h-full object-cover object-center rounded-none"
             />
             {product.discount && product.discount > 0 && (
-              <div className="absolute top-4 left-4 bg-rose-600 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow">
+              <div className="absolute top-4 left-4 bg-rose-600 text-white text-xs font-bold px-2.5 py-1 rounded-none shadow-xs">
                 Save {product.discount}%
               </div>
             )}
             <div className="absolute bottom-4 left-4">
-              <span className={`text-xs font-semibold px-3 py-1 rounded-lg border backdrop-blur-md ${stockInfo.badge}`}>
+              <span className={`text-xs font-semibold px-3 py-1 rounded-none border backdrop-blur-md ${stockInfo.badge}`}>
                 {stockInfo.text}
               </span>
             </div>
           </div>
 
-          {/* Thumbnails Row */}
+          {/* Thumbnails Row (Sharp Corners) */}
           {gallery.length > 1 && (
             <div className="flex items-center gap-3 overflow-x-auto pb-2 scrollbar-none">
               {gallery.map((imgUrl, index) => (
                 <button
                   key={index}
                   onClick={() => setSelectedImage(imgUrl)}
-                  className={`relative w-20 h-20 rounded-xl overflow-hidden bg-zinc-100 shrink-0 border-2 transition-all ${
+                  className={`relative w-20 h-20 rounded-none overflow-hidden bg-zinc-100 shrink-0 border-2 transition-all ${
                     selectedImage === imgUrl
-                      ? 'border-zinc-900 shadow-md scale-102'
+                      ? 'border-zinc-900 shadow-sm'
                       : 'border-transparent opacity-70 hover:opacity-100'
                   }`}
                 >
-                  <img src={imgUrl} alt={`Thumbnail ${index + 1}`} className="w-full h-full object-cover" />
+                  <img src={imgUrl} alt={`Thumbnail ${index + 1}`} className="w-full h-full object-cover rounded-none" />
                 </button>
               ))}
             </div>
@@ -167,7 +167,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
           {/* Title & Brand */}
           <div className="space-y-2 border-b border-zinc-200 pb-6">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold tracking-widest uppercase text-zinc-500">
+              <span className="text-xs font-medium tracking-widest uppercase text-zinc-500">
                 {product.brand || 'ARC'} &bull; SKU: {product.sku || 'ARC-000'}
               </span>
               <button
@@ -179,7 +179,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
               </button>
             </div>
 
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-zinc-900 leading-tight">
+            <h1 className="text-2xl sm:text-3xl font-semibold text-zinc-900 leading-tight">
               {product.name}
             </h1>
 
@@ -197,7 +197,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                   />
                 ))}
               </div>
-              <span className="text-xs font-bold text-zinc-800">{product.rating ? product.rating.toFixed(1) : '5.0'}</span>
+              <span className="text-xs font-medium text-zinc-800">{product.rating ? product.rating.toFixed(1) : '5.0'}</span>
               <span className="text-xs text-zinc-400">({reviews.length || product.reviewCount || 0} customer reviews)</span>
             </div>
           </div>
@@ -205,7 +205,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
           {/* Pricing Box */}
           <div className="space-y-1">
             <div className="flex items-baseline gap-3">
-              <span className="text-3xl font-extrabold text-zinc-900">
+              <span className="text-3xl font-semibold text-zinc-900">
                 {formatCurrency(product.price)}
               </span>
               {product.originalPrice && product.originalPrice > product.price && (
@@ -214,20 +214,20 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                 </span>
               )}
             </div>
-            <p className="text-[11px] text-zinc-500">
+            <p className="text-[11px] text-zinc-500 font-light">
               Direct ARC Studio Pricing &bull; All Taxes Included &bull; Cash on Delivery Available
             </p>
           </div>
 
           {/* Description */}
-          <p className="text-sm text-zinc-600 leading-relaxed">{product.description}</p>
+          <p className="text-sm text-zinc-600 leading-relaxed font-normal">{product.description}</p>
 
           {/* Quantity & Actions Box */}
-          <div className="p-5 rounded-2xl bg-zinc-50 border border-zinc-200/80 space-y-4">
+          <div className="p-5 rounded-none bg-zinc-50 border border-zinc-200 space-y-4">
             {/* Quantity Selector */}
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-zinc-700">Quantity</span>
-              <div className="flex items-center border border-zinc-300 rounded-xl bg-white overflow-hidden shadow-2xs">
+              <span className="text-xs font-medium text-zinc-700">Quantity</span>
+              <div className="flex items-center border border-zinc-300 rounded-none bg-white overflow-hidden shadow-2xs">
                 <button
                   type="button"
                   disabled={quantity <= 1 || isOutOfStock}
@@ -236,7 +236,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                 >
                   <Minus className="w-3.5 h-3.5" />
                 </button>
-                <span className="w-12 text-center text-xs font-bold text-zinc-900 select-none">
+                <span className="w-12 text-center text-xs font-medium text-zinc-900 select-none">
                   {quantity}
                 </span>
                 <button
@@ -256,7 +256,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                 type="button"
                 disabled={isOutOfStock}
                 onClick={handleAddToCart}
-                className={`py-3 px-4 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-sm ${
+                className={`py-3.5 px-4 rounded-none text-xs font-medium uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-xs ${
                   isOutOfStock
                     ? 'bg-zinc-200 text-zinc-400 cursor-not-allowed'
                     : 'bg-zinc-900 hover:bg-black text-white hover:shadow-md active:scale-98'
@@ -270,7 +270,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                 type="button"
                 disabled={isOutOfStock}
                 onClick={handleBuyNow}
-                className={`py-3 px-4 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 border-2 transition-all ${
+                className={`py-3.5 px-4 rounded-none text-xs font-medium uppercase tracking-wider flex items-center justify-center gap-2 border-2 transition-all ${
                   isOutOfStock
                     ? 'border-zinc-200 text-zinc-400 cursor-not-allowed'
                     : 'border-zinc-900 text-zinc-900 hover:bg-zinc-900 hover:text-white active:scale-98'
@@ -285,7 +285,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
             <button
               type="button"
               onClick={() => toggleWishlist(product.id)}
-              className="w-full py-2 flex items-center justify-center gap-2 text-xs font-semibold text-zinc-600 hover:text-zinc-900 transition-colors"
+              className="w-full py-2 flex items-center justify-center gap-2 text-xs font-medium text-zinc-600 hover:text-zinc-900 transition-colors"
             >
               <Heart className={`w-4 h-4 ${isWishlisted ? 'fill-rose-600 text-rose-600' : ''}`} />
               <span>{isWishlisted ? 'Saved in Wishlist' : 'Add to Wishlist'}</span>
@@ -314,15 +314,15 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
       {product.specifications && Object.keys(product.specifications).length > 0 && (
         <section className="border-t border-zinc-200 pt-10 space-y-4">
           <div>
-            <span className="text-xs font-bold tracking-widest uppercase text-zinc-400">Technical Specifications</span>
-            <h3 className="text-xl font-bold text-zinc-900 mt-1">Engineering Data</h3>
+            <span className="text-xs font-medium tracking-widest uppercase text-zinc-400">Technical Specifications</span>
+            <h3 className="text-xl font-semibold text-zinc-900 mt-1">Engineering Data</h3>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-px bg-zinc-200 rounded-2xl overflow-hidden border border-zinc-200">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-px bg-zinc-200 rounded-none overflow-hidden border border-zinc-200">
             {Object.entries(product.specifications).map(([key, value]) => (
               <div key={key} className="bg-white p-4 flex justify-between gap-4 text-xs">
-                <span className="font-semibold text-zinc-500">{key}</span>
-                <span className="font-bold text-zinc-900 text-right">{value}</span>
+                <span className="font-normal text-zinc-500">{key}</span>
+                <span className="font-medium text-zinc-900 text-right">{value}</span>
               </div>
             ))}
           </div>
@@ -333,13 +333,13 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
       <section className="border-t border-zinc-200 pt-10 space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <span className="text-xs font-bold tracking-widest uppercase text-zinc-400">Verified Buyer Feedback</span>
-            <h3 className="text-xl font-bold text-zinc-900 mt-1">Customer Reviews ({reviews.length})</h3>
+            <span className="text-xs font-medium tracking-widest uppercase text-zinc-400">Verified Buyer Feedback</span>
+            <h3 className="text-xl font-semibold text-zinc-900 mt-1">Customer Reviews ({reviews.length})</h3>
           </div>
 
           <button
             onClick={() => setIsReviewModalOpen(true)}
-            className="px-4 py-2.5 bg-zinc-900 hover:bg-black text-white text-xs font-bold rounded-xl transition-all flex items-center gap-2 self-start"
+            className="px-4 py-2.5 bg-zinc-900 hover:bg-black text-white text-xs font-medium rounded-none transition-all flex items-center gap-2 self-start"
           >
             <MessageSquare className="w-3.5 h-3.5" />
             <span>Write a Review</span>

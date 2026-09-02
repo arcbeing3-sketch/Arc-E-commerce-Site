@@ -86,19 +86,19 @@ export const CustomerAuthModal: React.FC<CustomerAuthModalProps> = ({ isOpen, on
           initial={{ opacity: 0, scale: 0.95, y: 10 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 10 }}
-          className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl border border-zinc-200 overflow-hidden z-10"
+          className="relative w-full max-w-md bg-white rounded-none shadow-2xl border border-zinc-200 overflow-hidden z-10"
         >
           {/* Header */}
           <div className="px-6 pt-6 pb-4 bg-gradient-to-b from-zinc-50 to-white border-b border-zinc-100 flex items-center justify-between">
             <div>
-              <span className="text-xs font-bold tracking-widest uppercase text-zinc-500">ARC Customer Account</span>
-              <h2 className="text-xl font-bold text-zinc-900 mt-0.5">
+              <span className="text-xs font-medium tracking-widest uppercase text-zinc-500">ARC Customer Account</span>
+              <h2 className="text-xl font-semibold text-zinc-900 mt-0.5">
                 {isLogin ? 'Sign In to ARC' : 'Create Customer Account'}
               </h2>
             </div>
             <button
               onClick={onClose}
-              className="p-2 rounded-full text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors"
+              className="p-2 rounded-none text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
@@ -106,7 +106,7 @@ export const CustomerAuthModal: React.FC<CustomerAuthModalProps> = ({ isOpen, on
 
           <div className="p-6">
             {error && (
-              <div className="mb-4 p-3 rounded-lg bg-rose-50 border border-rose-200 text-xs text-rose-700">
+              <div className="mb-4 p-3 rounded-none bg-rose-50 border border-rose-200 text-xs text-rose-700 font-medium">
                 {error}
               </div>
             )}
@@ -116,7 +116,7 @@ export const CustomerAuthModal: React.FC<CustomerAuthModalProps> = ({ isOpen, on
               type="button"
               onClick={handleGoogleSignIn}
               disabled={loading}
-              className="w-full flex items-center justify-center gap-3 py-2.5 px-4 border border-zinc-300 rounded-xl text-sm font-medium text-zinc-700 bg-white hover:bg-zinc-50 transition-colors shadow-sm disabled:opacity-60"
+              className="w-full flex items-center justify-center gap-3 py-2.5 px-4 border border-zinc-300 rounded-none text-sm font-medium text-zinc-700 bg-white hover:bg-zinc-50 transition-colors shadow-sm disabled:opacity-60"
             >
               <svg className="w-4 h-4" viewBox="0 0 24 24">
                 <path
@@ -151,7 +151,7 @@ export const CustomerAuthModal: React.FC<CustomerAuthModalProps> = ({ isOpen, on
             <form onSubmit={handleSubmit} className="space-y-3.5">
               {!isLogin && (
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-700 mb-1">Full Name</label>
+                  <label className="block text-xs font-medium text-zinc-700 mb-1">Full Name</label>
                   <div className="relative">
                     <UserIcon className="w-4 h-4 text-zinc-400 absolute left-3 top-3" />
                     <input
@@ -160,14 +160,14 @@ export const CustomerAuthModal: React.FC<CustomerAuthModalProps> = ({ isOpen, on
                       value={displayName}
                       onChange={(e) => setDisplayName(e.target.value)}
                       placeholder="e.g. Tariq Ahmad"
-                      className="w-full pl-9 pr-3 py-2 text-sm border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:outline-none"
+                      className="w-full pl-9 pr-3 py-2 text-sm border border-zinc-300 rounded-none focus:ring-1 focus:ring-zinc-900 focus:outline-none"
                     />
                   </div>
                 </div>
               )}
 
               <div>
-                <label className="block text-xs font-semibold text-zinc-700 mb-1">Email Address</label>
+                <label className="block text-xs font-medium text-zinc-700 mb-1">Email Address</label>
                 <div className="relative">
                   <Mail className="w-4 h-4 text-zinc-400 absolute left-3 top-3" />
                   <input
@@ -176,14 +176,14 @@ export const CustomerAuthModal: React.FC<CustomerAuthModalProps> = ({ isOpen, on
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="you@example.com"
-                    className="w-full pl-9 pr-3 py-2 text-sm border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:outline-none"
+                    className="w-full pl-9 pr-3 py-2 text-sm border border-zinc-300 rounded-none focus:ring-1 focus:ring-zinc-900 focus:outline-none"
                   />
                 </div>
               </div>
 
               {!isLogin && (
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-700 mb-1">Phone (Optional)</label>
+                  <label className="block text-xs font-medium text-zinc-700 mb-1">Phone (Optional)</label>
                   <div className="relative">
                     <Phone className="w-4 h-4 text-zinc-400 absolute left-3 top-3" />
                     <input
@@ -191,14 +191,14 @@ export const CustomerAuthModal: React.FC<CustomerAuthModalProps> = ({ isOpen, on
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       placeholder="e.g. +92 300 1234567"
-                      className="w-full pl-9 pr-3 py-2 text-sm border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:outline-none"
+                      className="w-full pl-9 pr-3 py-2 text-sm border border-zinc-300 rounded-none focus:ring-1 focus:ring-zinc-900 focus:outline-none"
                     />
                   </div>
                 </div>
               )}
 
               <div>
-                <label className="block text-xs font-semibold text-zinc-700 mb-1">Password</label>
+                <label className="block text-xs font-medium text-zinc-700 mb-1">Password</label>
                 <div className="relative">
                   <Lock className="w-4 h-4 text-zinc-400 absolute left-3 top-3" />
                   <input
@@ -208,7 +208,7 @@ export const CustomerAuthModal: React.FC<CustomerAuthModalProps> = ({ isOpen, on
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
                     minLength={6}
-                    className="w-full pl-9 pr-3 py-2 text-sm border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:outline-none"
+                    className="w-full pl-9 pr-3 py-2 text-sm border border-zinc-300 rounded-none focus:ring-1 focus:ring-zinc-900 focus:outline-none"
                   />
                 </div>
               </div>
@@ -216,7 +216,7 @@ export const CustomerAuthModal: React.FC<CustomerAuthModalProps> = ({ isOpen, on
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full mt-4 py-2.5 px-4 bg-zinc-900 hover:bg-black text-white font-medium text-sm rounded-xl transition-all shadow hover:shadow-md flex items-center justify-center gap-2 disabled:opacity-60"
+                className="w-full mt-4 py-2.5 px-4 bg-zinc-900 hover:bg-black text-white font-medium text-sm rounded-none transition-all shadow hover:shadow-md flex items-center justify-center gap-2 disabled:opacity-60"
               >
                 <span>{loading ? 'Processing...' : isLogin ? 'Sign In to Account' : 'Create Account'}</span>
                 <ArrowRight className="w-4 h-4" />
@@ -234,7 +234,7 @@ export const CustomerAuthModal: React.FC<CustomerAuthModalProps> = ({ isOpen, on
                       setIsLogin(false);
                       setError(null);
                     }}
-                    className="text-zinc-900 font-semibold hover:underline"
+                    className="text-zinc-900 font-medium underline hover:text-black"
                   >
                     Sign up now
                   </button>
@@ -248,7 +248,7 @@ export const CustomerAuthModal: React.FC<CustomerAuthModalProps> = ({ isOpen, on
                       setIsLogin(true);
                       setError(null);
                     }}
-                    className="text-zinc-900 font-semibold hover:underline"
+                    className="text-zinc-900 font-medium underline hover:text-black"
                   >
                     Log in
                   </button>
