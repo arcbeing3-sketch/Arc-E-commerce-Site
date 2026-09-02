@@ -1,0 +1,183 @@
+{
+  "entities": {
+    "Product": {
+      "title": "Product",
+      "description": "ARC store products owned and managed exclusively by ARC owner/admin",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "category": { "type": "string" },
+        "brand": { "type": "string" },
+        "sku": { "type": "string" },
+        "price": { "type": "number" },
+        "originalPrice": { "type": "number" },
+        "discount": { "type": "number" },
+        "stock": { "type": "number" },
+        "stockStatus": { "type": "string", "enum": ["in_stock", "low_stock", "out_of_stock"] },
+        "imageUrl": { "type": "string" },
+        "galleryImages": { "type": "array", "items": { "type": "string" } },
+        "specifications": { "type": "object" },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "featured": { "type": "boolean" },
+        "status": { "type": "string", "enum": ["draft", "published", "archived"] },
+        "rating": { "type": "number" },
+        "reviewCount": { "type": "number" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["name", "price", "category", "stock", "status"]
+    },
+    "Category": {
+      "title": "Category",
+      "description": "Product categories in the ARC catalog",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "slug": { "type": "string" },
+        "description": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "productCount": { "type": "number" }
+      },
+      "required": ["name", "slug"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "Customer orders placed on ARC customer website",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "customerId": { "type": "string" },
+        "customerName": { "type": "string" },
+        "customerEmail": { "type": "string" },
+        "customerPhone": { "type": "string" },
+        "shippingAddress": {
+          "type": "object",
+          "properties": {
+            "street": { "type": "string" },
+            "city": { "type": "string" },
+            "province": { "type": "string" },
+            "postalCode": { "type": "string" },
+            "notes": { "type": "string" }
+          }
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "productId": { "type": "string" },
+              "name": { "type": "string" },
+              "price": { "type": "number" },
+              "quantity": { "type": "number" },
+              "imageUrl": { "type": "string" }
+            }
+          }
+        },
+        "subtotal": { "type": "number" },
+        "shippingFee": { "type": "number" },
+        "discountTotal": { "type": "number" },
+        "total": { "type": "number" },
+        "paymentMethod": { "type": "string", "enum": ["cod", "card", "bank_transfer"] },
+        "paymentStatus": { "type": "string", "enum": ["pending", "paid", "refunded"] },
+        "status": { "type": "string", "enum": ["pending", "confirmed", "processing", "shipped", "delivered", "cancelled"] },
+        "statusHistory": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "status": { "type": "string" },
+              "timestamp": { "type": "string" },
+              "note": { "type": "string" }
+            }
+          }
+        },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["customerName", "customerPhone", "shippingAddress", "items", "total", "status", "paymentMethod"]
+    },
+    "Review": {
+      "title": "Review",
+      "description": "Product reviews written by customers and moderated by admin",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "productId": { "type": "string" },
+        "productName": { "type": "string" },
+        "userId": { "type": "string" },
+        "userName": { "type": "string" },
+        "userEmail": { "type": "string" },
+        "rating": { "type": "number" },
+        "title": { "type": "string" },
+        "comment": { "type": "string" },
+        "verifiedPurchase": { "type": "boolean" },
+        "status": { "type": "string", "enum": ["approved", "pending", "rejected"] },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["productId", "rating", "comment", "userName"]
+    },
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile with role management for Customer or Owner/Admin",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "phone": { "type": "string" },
+        "role": { "type": "string", "enum": ["admin", "customer"] },
+        "totalOrders": { "type": "number" },
+        "totalSpent": { "type": "number" },
+        "createdAt": { "type": "string" },
+        "savedAddresses": { "type": "array" }
+      },
+      "required": ["email", "role"]
+    },
+    "StoreSettings": {
+      "title": "StoreSettings",
+      "description": "Global store settings for ARC single-vendor store",
+      "type": "object",
+      "properties": {
+        "storeName": { "type": "string" },
+        "tagline": { "type": "string" },
+        "currency": { "type": "string" },
+        "currencySymbol": { "type": "string" },
+        "freeShippingThreshold": { "type": "number" },
+        "defaultShippingFee": { "type": "number" },
+        "supportEmail": { "type": "string" },
+        "supportPhone": { "type": "string" },
+        "address": { "type": "string" },
+        "codEnabled": { "type": "boolean" }
+      }
+    }
+  },
+  "firestore": {
+    "products/{productId}": {
+      "schema": "Product",
+      "description": "Catalog of ARC products"
+    },
+    "categories/{categoryId}": {
+      "schema": "Category",
+      "description": "Product categories"
+    },
+    "orders/{orderId}": {
+      "schema": "Order",
+      "description": "Customer orders"
+    },
+    "reviews/{reviewId}": {
+      "schema": "Review",
+      "description": "Product reviews"
+    },
+    "users/{userId}": {
+      "schema": "UserProfile",
+      "description": "Registered customer profiles and admin records"
+    },
+    "settings/{settingId}": {
+      "schema": "StoreSettings",
+      "description": "Store configuration"
+    }
+  }
+}

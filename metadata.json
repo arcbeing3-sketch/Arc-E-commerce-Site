@@ -1,0 +1,6 @@
+{
+  "name": "ARC E-Commerce",
+  "description": "Single-vendor e-commerce platform with dedicated customer storefront and separated owner admin control center powered by Firebase Firestore and Authentication.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
